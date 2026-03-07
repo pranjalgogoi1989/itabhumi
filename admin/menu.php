@@ -28,7 +28,7 @@
     <li class="menu-item <?= isActive('new_allot.php') ?>">
         <a href="/admin/new_allot.php" class="menu-link">
             <i class="menu-icon tf-icons bx bx-home-circle"></i>
-            <div data-i18n="Analytics">New Allotment</div>
+            <div data-i18n="Analytics">Land Parcel</div>
         </a>
     </li>
 
@@ -39,13 +39,21 @@
         </a>
     </li>
 
+    <li class="menu-item <?= isActive('land_allot.php') ?>">
+        <a href="/admin/land_allot.php" class="menu-link">
+            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+            <div data-i18n="Analytics">Land Allot</div>
+        </a>
+    </li>
+
     <li class="menu-item">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon tf-icons bx bx-layout"></i><div data-i18n="Layouts">Reports</div>
         </a>
         <ul class="menu-sub">
-            <li class="menu-item"><a href="search_land_parcel.php" class="menu-link"><div data-i18n="Fluid">Land Parcel</div></a></li>
-            <li class="menu-item"><a href="search_chitha_details.php" class="menu-link"><div data-i18n="Blank">Chitha</div></a></li>
+            <li class="menu-item"><a href="/admin/search_chitha_details.php" class="menu-link"><div data-i18n="Blank">Chitha</div></a></li>
+            <li class="menu-item"><a href="/admin/search_land_parcel.php" class="menu-link"><div data-i18n="Fluid">Land Parcel</div></a></li>
+            <li class="menu-item"><a href="/admin/search_land_allot.php" class="menu-link"><div data-i18n="Fluid">Land Allotment</div></a></li>
         </ul>
     </li>
     

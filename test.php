@@ -1,0 +1,1 @@
+INSERT INTO land_allotment(unique_id,passbook_no,allotment_no,allotment_date,allotee_name,mobile_no,land_type,total_area,plot_location,dag_no,sheet_no,paid_upto,lease_period) VALUES(?,?,?,?,?,?,?,?,'?,?,?,?,?)

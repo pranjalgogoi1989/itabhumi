@@ -16,7 +16,7 @@ $stmt->execute([$row_id]);
 $row = $stmt->fetch();
 if (!$row) {
     header('Location: land_parcel.php');
-    exit();
+    //exit();
 }
 
 ?>
@@ -293,14 +293,14 @@ if (!$row) {
         </div>
         <?php
         $stmt2 = $pdo->prepare("select * from documents_uploaded where land_parcel_id = ?");
-        $stmt2->execute([$row['id']]);
+        $stmt2->execute([$row_id]);
         $count = 0;
-        while($row2 = $stmt->fetch()) {
+        while($row2 = $stmt2->fetch()) {
             $count++;
             echo '<div class="row">';
             echo '<div class="col-md-2">'.$count.'</div>';
             echo '<div class="col-md-5">'.$row2['document_details'].'</div>';
-            echo '<div class="col-md-5"><a href="'.$row2['document_file'].'" target="_blank" class="btn btn-primary">View</a></div>';
+            echo '<div class="col-md-5"><a href="/uploads/document/'.$row2['document_file'].'" target="_blank" class="btn btn-primary">View</a></div>';
             echo '</div>';
         }
         ?>
@@ -314,6 +314,7 @@ if (!$row) {
 </fieldset>
 <br>
 <center>
+    <a href="edit_land_parcel.php?id=<?php echo $row['id']; ?>" class="btn btn-info">Edit</a> &nbsp;
     <a href="search_land_parcel.php" class="btn btn-danger">Back</a>
 </center>
 

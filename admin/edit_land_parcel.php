@@ -3,9 +3,10 @@ require_once __DIR__ . '/../middleware/auth.php';
 requireRole('admin');
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../security/csrf.php';
-$title='Land Parcel Allotment';
+$title='Edit Land Parcel Details';
 require_once 'header.php';
 
+$insertId = $_GET["id"];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_validate($_POST['csrf_token']);
@@ -59,12 +60,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if (empty($errors)) {
         $stmt = $pdo->prepare(
-            "INSERT INTO land_parcel(parcel_id,district,circle,village_ward,allotment_no,dag_no,map_sheet_no,pattadar_name,father_husband,tribe_community,permanent_address,current_address,family_details,ownership_type,tenure_type,area,land_use,north_boundary,south_boundary,east_boundary,west_boundary,latitude,longitude,gis_polygon,mutation_order,mutation_date,revenue_demand,revenue_paid,receipt_no,last_payment_date,encumbrance_no,acquisition_status,encroachment_status,inspection_date,documents_available,digitisation_status,entered_by,verified_by,last_updated_date,remarks)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
+            "update land_parcel set district=?,circle=?,village_ward=?,allotment_no=?,dag_no=?,map_sheet_no=?,pattadar_name=?,father_husband=?,tribe_community=?,permanent_address=?,current_address=?,family_details=?,ownership_type=?,tenure_type=?,area=?,land_use=?,north_boundary=?,south_boundary=?,east_boundary=?,west_boundary=?,latitude=?,longitude=?,gis_polygon=?,mutation_order=?,mutation_date=?,revenue_demand=?,revenue_paid=?,receipt_no=?,last_payment_date=?,encumbrance_no=?,acquisition_status=?,encroachment_status=?,inspection_date=?,documents_available=?,digitisation_status=?,entered_by=?,verified_by=?,last_updated_date=?,remarks=? where parcel_id=?;"
         );
-        $stmt->execute([$parcel_id,$district,$circle,$village_ward,$allotment_no,$dag_no,$map_sheet_no,$pattadar_name,$father_husband,$tribe_community,$permanent_address,$current_address,$family_details,$ownership_type,$tenure_type,$area,$land_use,$north_boundary,$south_boundary,$east_boundary,$west_boundary,$latitude_nodes,$longitude_nodes,$gis_polygon,$mutation_order,$mutation_date,$revenue_demand,$revenue_paid,$receipt_no,$last_payment_date,$encumbrance,$acquisition_status,$encroachment_status,$inspection_date,$documents_available,$digitisation_status,$entered_by,$verified_by,$last_updated_date,$remarks]);
-        $parcel_id = $pdo->lastInsertId();
+        $stmt->execute([$district,$circle,$village_ward,$allotment_no,$dag_no,$map_sheet_no,$pattadar_name,$father_husband,$tribe_community,$permanent_address,$current_address,$family_details,$ownership_type,$tenure_type,$area,$land_use,$north_boundary,$south_boundary,$east_boundary,$west_boundary,$latitude_nodes,$longitude_nodes,$gis_polygon,$mutation_order,$mutation_date,$revenue_demand,$revenue_paid,$receipt_no,$last_payment_date,$encumbrance,$acquisition_status,$encroachment_status,$inspection_date,$documents_available,$digitisation_status,$entered_by,$verified_by,$last_updated_date,$remarks,$parcel_id]);
+        //$insertId = $pdo->lastInsertId();
 
         if($fam_count>0){
+            $stmt= $pdo->prepare("delete from land_parcel_family where land_parcel_id=?");
+            $stmt->execute([$insertId]);
             for($i=1;$i<=$fam_count;$i++){
                 $fam_name="fam_name".$i;
                 $fam_relation="fam_relation".$i;
@@ -76,12 +79,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt = $pdo->prepare(
                         "INSERT INTO land_parcel_family(land_parcel_id,person_name,relationship, age)VALUES(?,?,?,?);"
                     );
-                    $stmt->execute([$parcel_id,$fam_name,$fam_relation, $fam_age]);
+                    $stmt->execute([$insertId,$fam_name,$fam_relation, $fam_age]);
                 }
             }
         }
 
         if($doc_count>0){
+            $stmt= $pdo->prepare("delete from documents_uploaded where land_parcel_id=?");
+            $stmt->execute([$insertId]);
             for($i=1;$i<=$doc_count;$i++){
                 $doc_name="doc_name".$i;
                 $doc_file="doc_file".$i;
@@ -91,18 +96,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt = $pdo->prepare(
                         "INSERT INTO documents_uploaded(land_parcel_id,document_details, document_file)VALUES(?,?,?);"
                     );
-                    $stmt->execute([$parcel_id,$doc_name,$doc_file]);
+                    $stmt->execute([$insertId,$doc_name,$doc_file]);
                 }
             }
         }   
 
-        echo "<div class='alert alert-success'>Land Parcel Added Successfully!</div>";
-        exit();     
+        echo "<div class='alert alert-success'>Land Parcel Details Updated Successfully!</div>";
+        //exit();     
     }else{
         echo "<div class='alert alert-danger'>".implode("<br>", $errors)."</div>";
     }
-
 }
+
+$stmt = $pdo->prepare("SELECT * FROM land_parcel WHERE id=?");
+$stmt->execute([$insertId]);
+$land_parcel = $stmt->fetch(PDO::FETCH_ASSOC);
+
 ?>
 <script>
     function getCircle(district) {
@@ -153,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="d-flex align-items-top row">
                 <div class="col-sm-12">
                     <div class="card-body">
-                        <h5 class="card-title text-primary text-center">Land Parcel New Allotment</h5>
+                        <h5 class="card-title text-primary text-center">Edit Land Parcel Details</h5>
                         
                         <form method="POST" >
                             <input type="hidden" name="csrf_token" value="<?php echo csrf_token(); ?>">
@@ -164,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="row">
         <div class="col-sm-4">
             <label>Parcel ID</label>
-            <input type="text" class="form-control" name="parcel_id">
+            <input type="text" class="form-control" name="parcel_id" value="<?php echo $land_parcel['parcel_id']; ?>" readonly>
         </div>
         <div class="col-sm-4">
             <label>District</label>
@@ -174,7 +183,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $pdo->prepare("SELECT * FROM districts");
                 $stmt->execute();
                 while ($row = $stmt->fetch()) {
-                    echo '<option value="' . $row['id'] . '">' . $row['district_name'] . '</option>';
+                    if($land_parcel["district"]==$row["id"]){
+                        echo '<option value="' . $row['id'] . '" selected>' . $row['district_name'] . '</option>';
+                    }else{
+                        echo '<option value="' . $row['id'] . '">' . $row['district_name'] . '</option>';
+                    }
                 }
                 ?>
             </select>
@@ -183,6 +196,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label>Circle</label>
             <select name="circle" id="circle" class="form-control">
                 <option value="Select Circle">Select Circle</option>
+                <?php
+                $stmt = $pdo->prepare("SELECT * FROM circles");
+                $stmt->execute();
+                while ($row = $stmt->fetch()) {
+                    if($row["circle_name"]==$land_parcel["circle"]){
+                        echo '<option value="' . $row['circle_name'] . '" selected>' . $row['circle_name'] . '</option>';
+                    }else{
+                        echo '<option value="' . $row['circle_name'] . '">' . $row['circle_name'] . '</option>';
+                    }
+                }
+                ?>
             </select>
         </div>
     </div>
@@ -190,26 +214,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="row">
         <div class="col-sm-4">
             <label>Village/Ward</label>
-            <input type="text" class="form-control" name="village">
+            <input type="text" class="form-control" name="village" value="<?php echo $land_parcel['village_ward']; ?>">
         </div>
         <div class="col-sm-4">
             <label>Allotment No</label>
-            <input type="text" class="form-control" name="allotment_no">
+            <input type="text" class="form-control" name="allotment_no" value="<?php echo $land_parcel['allotment_no']; ?>">
         </div>
         <div class="col-sm-4">
             <label>Dag/Survey No</label>
-            <input type="text" class="form-control" name="dag_no">
+            <input type="text" class="form-control" name="dag_no" value="<?php echo $land_parcel['dag_no']; ?>">
         </div>
     </div>
 
     <div class="row">
         <div class="col-sm-4">
             <label>Map Sheet No</label>
-            <input type="text" class="form-control" name="map_sheet_no">
+            <input type="text" class="form-control" name="map_sheet_no" value="<?php echo $land_parcel['map_sheet_no']; ?>">
         </div>
         <div class="col-sm-4">
             <label>GIS Polygon/KML Ref</label>
-            <input type="text" class="form-control" name="gis_ref">
+            <input type="text" class="form-control" name="gis_ref" value="<?php echo $land_parcel['gis_polygon']; ?>">
         </div>
     </div>
 </fieldset>
@@ -220,46 +244,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="row">
         <div class="col-sm-6">
              <label>Pattadar/Allottee Name</label>
-            <input type="text" class="form-control" name="owner_name">
+            <input type="text" class="form-control" name="owner_name" value="<?php echo $land_parcel['pattadar_name']; ?>">
         </div>
         <div class="col-sm-6">
             <label>Father/Husband Name</label>
-            <input type="text" class="form-control" name="guardian_name">
+            <input type="text" class="form-control" name="guardian_name" value="<?php echo $land_parcel['father_husband']; ?>">
         </div>
     </div>
     <div class="row">
         <div class="col-sm-6">
             <label>Permanent Address</label>
-            <textarea class="form-control" rows="3" name="permanent_address"></textarea>
+            <textarea class="form-control" rows="3" name="permanent_address"><?php echo $land_parcel['permanent_address']; ?> </textarea>
         </div>
         <div class="col-sm-6">
             <label>Current Address</label>
-            <textarea class="form-control" rows="3" name="current_address"></textarea>
+            <textarea class="form-control" rows="3" name="current_address"><?php echo $land_parcel['current_address']; ?></textarea>
         </div>
     </div>
     <div class="row">
         <div class="col-sm-4">
             <label>Tribe/Community</label>
-            <input type="text" class="form-control" name="tribe">
+            <input type="text" class="form-control" name="tribe" value="<?php echo $land_parcel['tribe_community']; ?>">
         </div>
         <div class="col-sm-4">
             <label>Ownership Type</label>
             <select class="form-control" name="ownership_type">
-                <option value="G">Govt. Allottee</option>
-                <option value="L">LPC</option>
-                <option value="E">Encroacher</option>
-                <option value="I">Inherited</option>
-                <option value="O">Other</option>
+                <option value="G" <?php $land_parcel["ownership_type"]=="G"? 'selected':''?>>Govt. Allottee</option>
+                <option value="L" <?php $land_parcel["ownership_type"]=="L"? 'selected':''?>>LPC</option>
+                <option value="E" <?php $land_parcel["ownership_type"]=="E"? 'selected':''?>>Encroacher</option>
+                <option value="I" <?php $land_parcel["ownership_type"]=="I"? 'selected':''?>>Inherited</option>
+                <option value="O" <?php $land_parcel["ownership_type"]=="O"? 'selected':''?>>Other</option>
             </select>
         </div>
         <div class="col-sm-4">
             <label>Tenure Type</label>
             <select class="form-control" name="tenure_type">
-                <option value="P">PRIVATE</option>
-                <option value="A">Allotment</option>
-                <option value="L">LPC</option>
-                <option value="S">STATE Govt.</option>
-                <option value="C">CENTRAL GOVT.</option>
+                <option value="P" <?php $land_parcel["tenure_type"]=="P"? 'selected':''?>>PRIVATE</option>
+                <option value="A" <?php $land_parcel["tenure_type"]=="A"? 'selected':''?>>Allotment</option>
+                <option value="L" <?php $land_parcel["tenure_type"]=="L"? 'selected':''?>>LPC</option>
+                <option value="S" <?php $land_parcel["tenure_type"]=="S"? 'selected':''?>>STATE Govt.</option>
+                <option value="C" <?php $land_parcel["tenure_type"]=="C"? 'selected':''?>>CENTRAL GOVT.</option>
             </select>
         </div>
     </div>    
@@ -267,8 +291,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <br>
 <fieldset>
     <legend>Pattadar Family Details</legend>
+    <?php
+        $stmt = $pdo->prepare("SELECT * FROM land_parcel_family where land_parcel_id=?");
+        $stmt->execute([$land_parcel["id"]]);
+        
+    ?>
     <span class="pull-right"><span class="btn btn-primary" onclick="addFamilyRow()"><i class="fa fa-plus"></i> Add family details</span> </span>
-    <input type="hidden" value="0" id="family_count" name="family_count"/>
+    <input type="hidden" value="<?php echo $stmt->rowCount();?>" id="family_count" name="family_count"/>
     <div class="row">
         <div class="col-sm-2">
             <label>Sl No</label>
@@ -287,7 +316,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
     <div id="familylist">
-
+        <?php
+            $famCount=0;
+            while($row=$stmt->fetch()){
+                $famCount++;
+                echo '<div class="row">';
+                echo '<div class="col-sm-2">'.$famCount.'</div>';
+                echo '<div class="col-sm-4"><input type="text" class="form-control" id="fam_name'.$famCount.'" name="fam_name'.$famCount.'" placeholder="Name" value="'.$row['person_name'].'" ></div>';
+                echo '<div class="col-sm-2"><input type="text" class="form-control" id="fam_relation'.$famCount.'" name="fam_relation'.$famCount.'" placeholder="Relation" value="'.$row['relationship'].'"></div>';
+                echo '<div class="col-sm-2"><input type="text" class="form-control" id="fam_age'.$famCount.'" name="fam_age'.$famCount.'" placeholder="Age" value="'.$row['age'].'"></div>';
+                echo '<div class="col-sm-2"><span class="btn btn-danger" onclick="removeFamRow(this)">Remove</span></div>';
+                echo '</div>';
+            }
+        ?>
     </div>
 </fieldset>
 <br><br>
@@ -297,36 +338,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="row">
         <div class="col-sm-6">
             <label>Area (Sqm/Ha)</label>
-            <input class="form-control" type="text" name="area">
+            <input class="form-control" type="text" name="area" value="<?php echo $land_parcel["area"];?>">
         </div>
         <div class="col-sm 6">
             <label>Land Use</label>
             <select class="form-control" name="land_use">
-                <option value="R">Residential</option>
-                <option value="C">Commercial</option>
-                <option value="RC">Res Cum Commercial</option>
-                <option value="A">Agriculture</option>
-                <option value="H">Horticulture</option>
-                <option value="CM">Community</option>
-                <option value="I">Institutional</option>
-                <option value="S">Society</option>
+                <option value="R" <?php $land_parcel["land_use"]=="R" ? 'selected':'' ?>>Residential</option>
+                <option value="C" <?php $land_parcel["land_use"]=="C" ? 'selected':'' ?>>Commercial</option>
+                <option value="RC" <?php $land_parcel["land_use"]=="RC" ? 'selected':'' ?>>Res Cum Commercial</option>
+                <option value="A" <?php $land_parcel["land_use"]=="A" ? 'selected':'' ?>>Agriculture</option>
+                <option value="H" <?php $land_parcel["land_use"]=="H" ? 'selected':'' ?>>Horticulture</option>
+                <option value="CM" <?php $land_parcel["land_use"]=="CH" ? 'selected':'' ?>>Community</option>
+                <option value="I" <?php $land_parcel["land_use"]=="I" ? 'selected':'' ?>>Institutional</option>
+                <option value="S" <?php $land_parcel["land_use"]=="S" ? 'selected':'' ?>>Society</option>
             </select>
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-3"><label>North Boundary</label><input type="text" class="form-control" name="north_boundary"></div>
-        <div class="col-sm-3"><label>South Boundary</label><input type="text" class="form-control" name="south_boundary"></div>
-        <div class="col-sm-3"><label>East Boundary</label><input type="text" class="form-control" name="east_boundary"></div>
-        <div class="col-sm-3"><label>West Boundary</label><input type="text" class="form-control" name="west_boundary"></div>
+        <div class="col-sm-3"><label>North Boundary</label><input type="text" class="form-control" name="north_boundary" value="<?php echo $land_parcel['north_boundary']; ?>"></div>
+        <div class="col-sm-3"><label>South Boundary</label><input type="text" class="form-control" name="south_boundary" value="<?php echo $land_parcel['south_boundary']; ?>"></div>
+        <div class="col-sm-3"><label>East Boundary</label><input type="text" class="form-control" name="east_boundary" value="<?php echo $land_parcel['east_boundary']; ?>"></div>
+        <div class="col-sm-3"><label>West Boundary</label><input type="text" class="form-control" name="west_boundary" value="<?php echo $land_parcel['west_boundary']; ?>"></div>
     </div>
     <div class="row">
         <div class="col-sm-6">
             <label>Latitude of Each Node</label>
-            <textarea name="latitude_nodes" class="form-control" placeholder="Comma separated values"></textarea>
+            <textarea name="latitude_nodes" class="form-control" placeholder="Comma separated values"><?php echo $land_parcel['latitude']; ?></textarea>
         </div>
         <div class="col-sm-6">
             <label>Longitude of Each Node</label>
-            <textarea name="longitude_nodes" class="form-control" placeholder="Comma separated values"></textarea>
+            <textarea name="longitude_nodes" class="form-control" placeholder="Comma separated values"><?php echo $land_parcel['longitude']; ?></textarea>
         </div>
     </div>
 </fieldset>
@@ -337,27 +378,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="row">
         <div class="col-sm-2">
             <label>Mutation Order No</label>
-            <input type="text" class="form-control" name="mutation_order">
+            <input type="text" class="form-control" name="mutation_order" value="<?php echo $land_parcel['mutation_order']; ?>">
         </div>
         <div class="col-sm-2">
             <label>Mutation Date</label>
-            <input type="date" class="form-control" name="mutation_date">
+            <input type="date" class="form-control" name="mutation_date" value="<?php echo $land_parcel['mutation_date']; ?>">
         </div>
         <div class="col-sm-2">
             <label>Revenue Demand (₹)</label>
-            <input type="number" class="form-control" name="revenue_demand" value="0" placeholder="0">
+            <input type="number" class="form-control" name="revenue_demand" value="<?php echo $land_parcel['revenue_demand']; ?>" placeholder="0">
         </div>
         <div class="col-sm-2">
             <label>Revenue Paid (₹)</label>
-            <input type="number" class="form-control" name="revenue_paid" value="0" placeholder="0">
+            <input type="number" class="form-control" name="revenue_paid" value="<?php echo $land_parcel['revenue_paid']; ?>" placeholder="0">
         </div>
         <div class="col-sm-2">
             <label>Receipt No</label>
-            <input type="text" class="form-control" name="receipt_no">
+            <input type="text" class="form-control" name="receipt_no" value="<?php echo $land_parcel['receipt_no']; ?>">
         </div>
         <div class="col-sm-2">
             <label>Last Payment Date</label>
-            <input type="date" class="form-control" name="last_payment_date">
+            <input type="date" class="form-control" name="last_payment_date" value="<?php echo $land_parcel['last_payment_date']; ?>">
         </div>
     </div>
 </fieldset>
@@ -369,27 +410,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="col-sm-2">
             <label>Encumbrance/Court Case</label>
             <select name="encumbrance" class="form-control">
-                <option value="Y">Yes</option>
-                <option value="N">No</option>
+                <option value="Y" <?php if($land_parcel['encumbrance_no'] == 'Y') echo "selected"; ?>>Yes</option>
+                <option value="N" <?php if($land_parcel['encumbrance_no'] == 'N') echo "selected"; ?>>No</option>
             </select>
         </div>
         <div class="col-sm-3">
             <label>Acquisition Status (LARR)</label>
-            <input type="text" name="acquisition_status" class="form-control">
+            <input type="text" name="acquisition_status" class="form-control" value="<?php echo $land_parcel['acquisition_status']; ?>">
         </div>
         <div class="col-sm-3">
             <label>Encroachment Status</label>
-            <input type="text" name="encroachment_status" class="form-control">
+            <input type="text" name="encroachment_status" class="form-control" value="<?php echo $land_parcel["encroachment_status"];?>">
         </div>
         <div class="col-sm-2">
             <label>Inspection Date</label>
-            <input type="date" name="inspection_date" class="form-control">
+            <input type="date" name="inspection_date" class="form-control" value="<?php echo $land_parcel["inspection_date"];?>">
         </div>
         <div class="col-sm-2">
             <label>Digitisation Status</label>
             <select name="digitisation_status" class="form-control">
-                <option value="Pending">Pending</option>
-                <option value="Completed">Completed</option>
+                <option value="Pending" <?php if($land_parcel['digitisation_status'] == 'Pending') echo "selected"; ?>>Pending</option>
+                <option value="Completed" <?php if($land_parcel['digitisation_status'] == 'Completed') echo "selected"; ?>>Completed</option>
             </select>
         </div>
     </div>
@@ -398,9 +439,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <legend>Documents Available</legend>
         <div class="col-md-12">
             <span class="btn btn-primary" onclick="openModal()">Upload Document</span>
-            <input type="hidden" id="doc_count" value="0" name="doc_count" >
+            <?php
+            $stmt= $pdo->prepare("select * from documents_uploaded where land_parcel_id=?");
+            $stmt->execute([$land_parcel["id"]]);
+            ?>
+            <input type="hidden" id="doc_count" value="<?php echo $stmt->rowCount(); ?>" name="doc_count" >
             <div id="doclist">
-
+            <?php
+                $count=0;
+                while($row=$stmt->fetch()){
+                    $count++;
+                    echo "<div class='row'>";
+                    echo "<div class='col-md-1'>".$count."</div>";
+                    echo "<div class='col-md-3'>".$row["document_details"]."";
+                    echo "<input type='hidden' id='doc_name".$count."' name='doc_name".$count."' value='".$row["document_details"]."' />";
+                    echo "</div>";
+                    echo "<div class='col-md-3'>";
+                    echo "<input type='hidden' id='doc_file".$count."' name='doc_file".$count."' value='".$row["document_file"]."' />";
+                    echo "<a href='/uploads/document/".$row["document_file"]."' target='_blank' class='btn btn-primary'>View Document</a></div>";
+                    echo "<div class='col-md-4'><span onClick='removeRow(this, '".$row["document_file"].")' class='btn btn-danger'>Remove</span></div>";
+                    echo "</div>";
+                }
+            ?>
             </div>
         </div>
     </div>    
@@ -409,9 +469,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!-- Admin -->
 <fieldset>
     <label>Remarks</label>
-    <textarea name="remarks" class="form-control" rows="3"></textarea>
+    <textarea name="remarks" class="form-control" rows="3"><?php echo $land_parcel['remarks'];?></textarea>
 </fieldset>
-<button type="submit"  class="btn btn-primary">Submit</button>
+<center>
+    <a href="/admin/land_parcel_details.php?id=<?php echo $insertId; ?>" class="btn btn-warning">Back </a>
+    <button type="submit"  class="btn btn-primary">Update</button>
+</center>
 </form>
 
 <div id="uploadModal" class="modal" class="modal-dialog">
@@ -462,6 +525,7 @@ document.getElementById("uploadForm").addEventListener("submit", function(e) {
     .then(data => {
         document.getElementById("response").innerHTML = data;
         let datas = data.split("|");
+        count=document.getElementById("doc_count").value;
         count++;
         document.getElementById("doc_count").value = count;
         let html = `
@@ -487,6 +551,7 @@ document.getElementById("uploadForm").addEventListener("submit", function(e) {
 function removeRow(button, filename) {
     
     if(confirm("Are you sure you want to delete this document?")) {
+        count=document.getElementById("doc_count").value;
         count--;
         document.getElementById("doc_count").value = count;
         fetch("removeDocument.php", {
@@ -507,6 +572,7 @@ function removeRow(button, filename) {
 
 let famCounter=0;
 function addFamilyRow() {
+    famCounter = document.getElementById("family_count").value;
     famCounter++;
     document.getElementById("family_count").value = famCounter;
     let html = `
@@ -521,6 +587,7 @@ function addFamilyRow() {
     document.getElementById("familylist").insertAdjacentHTML("beforeend", html);
 }
 function removeFamRow(button) {
+    famCounter = document.getElementById("family_count").value;
     famCounter--;
     document.getElementById("family_count").value = famCounter;
     button.parentElement.parentElement.remove();

@@ -21,7 +21,6 @@ if (isset($_POST['search_criteria']) && isset($_POST['search_text'])) {
         $html .= '<div class="col-sm-1">Village/Sector</div>';
         $html .= '<div class="col-sm-1">Land Use</div>';
         $html .= '<div class="col-sm-1">Area</div>';
-        $html .= '<div class="col-sm-1">Area Possessed</div>';
         $html .= '<div class="col-sm-1">Occupancy Date/Year</div>';
         $html .= '<div class="col-sm-1">Updated At</div>';
         $html .= '<div class="col-sm-1">Actions</div>';
@@ -35,10 +34,12 @@ if (isset($_POST['search_criteria']) && isset($_POST['search_text'])) {
             $html .= '<div class="col-sm-1">' . $row['village_ward'] . '</div>';
             $html .= '<div class="col-sm-1">' . $row['land_use'] . '</div>';
             $html .= '<div class="col-sm-1">' . $row['area'] . '</div>';
-            $html .= '<div class="col-sm-1">' . $row['area_possessed'] . '</div>';
             $html .= '<div class="col-sm-1">' . $row['occupy_date'] . '</div>';
             $html .= '<div class="col-sm-1">' . $row['updated_at'] . '</div>';
-            $html .= '<div class="col-sm-1"><a href="chitha_record_details.php?id=' . $row['id'] . '" class="btn btn-primary">View</a></div>';
+            $html .= '<div class="col-sm-2">';
+                $html .= '<a href="chitha_record_details.php?id=' . $row['id'] . '" class="btn btn-primary">View</a>';
+                $html .= '<a href="edit_chitha.php?id=' . $row['id'] . '" class="btn btn-info">Edit</a>';
+            $html .= '</div>';
             $html .= '</div>';
         }
         echo $html;
