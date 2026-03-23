@@ -37,8 +37,8 @@ if (isset($_POST['search_criteria']) && isset($_POST['search_text'])) {
             $html .= '<div class="col-sm-1">' . $row['occupy_date'] . '</div>';
             $html .= '<div class="col-sm-1">' . $row['updated_at'] . '</div>';
             $html .= '<div class="col-sm-2">';
-                $html .= '<a href="chitha_record_details.php?id=' . $row['id'] . '" class="btn btn-primary">View</a>';
-                $html .= '<a href="edit_chitha.php?id=' . $row['id'] . '" class="btn btn-info">Edit</a>';
+            $html .= '<a href="chitha_record_details.php?id=' . $row['id'] . '" class="btn btn-primary">View</a>';
+            //$html .= '<a href="edit_chitha.php?id=' . $row['id'] . '" class="btn btn-info">Edit</a>';
             $html .= '</div>';
             $html .= '</div>';
         }

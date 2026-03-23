@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../middleware/auth.php';
-requireRole('admin');
+requireRole('user');
 $title='Dashboard';
 require_once 'header.php';
 ?>
@@ -13,12 +13,12 @@ require_once 'header.php';
             <div class="d-flex align-items-end row">
             <div class="col-sm-12">
                 <div class="card-body">
-                <h5 class="card-title text-primary">Admin Dashboard</h5>
+                <h5 class="card-title text-primary">User Dashboard</h5>
                 <p class="mb-4">
                     Welcome to eITABHOOMI. 
                 </p>
 
-                
+                <a href="/user/profile.php" class="btn btn-sm btn-outline-primary">View My Profile</a>
                 </div>
             </div>
             

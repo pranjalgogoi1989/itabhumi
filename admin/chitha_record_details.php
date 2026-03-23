@@ -126,7 +126,7 @@ if (!$row) {
 </fieldset>
 <br>
 <center>
-    <a href="search_chitha_details.php" class="btn btn-danger">Back</a>
+    <a href="chitha_register_all.php" class="btn btn-danger">Back</a>
 </center>
 
                     </div>

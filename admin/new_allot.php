@@ -89,9 +89,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $doc_file = $_POST[$doc_file];
                 if($doc_name!="" && $doc_file!=""){
                     $stmt = $pdo->prepare(
-                        "INSERT INTO documents_uploaded(land_parcel_id,document_details, document_file)VALUES(?,?,?);"
+                        "INSERT INTO documents_uploaded(mmodule_name,land_parcel_id,document_details, document_file)VALUES(?,?,?,?);"
                     );
-                    $stmt->execute([$parcel_id,$doc_name,$doc_file]);
+                    $stmt->execute(['land_parcel',$parcel_id,$doc_name,$doc_file]);
                 }
             }
         }   

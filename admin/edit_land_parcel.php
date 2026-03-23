@@ -472,7 +472,7 @@ $land_parcel = $stmt->fetch(PDO::FETCH_ASSOC);
     <textarea name="remarks" class="form-control" rows="3"><?php echo $land_parcel['remarks'];?></textarea>
 </fieldset>
 <center>
-    <a href="/admin/land_parcel_details.php?id=<?php echo $insertId; ?>" class="btn btn-warning">Back </a>
+    <a href="/admin/land_parcel_all.php" class="btn btn-warning">Back </a>
     <button type="submit"  class="btn btn-primary">Update</button>
 </center>
 </form>

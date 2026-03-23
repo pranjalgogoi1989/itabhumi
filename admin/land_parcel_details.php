@@ -315,7 +315,7 @@ if (!$row) {
 <br>
 <center>
     <a href="edit_land_parcel.php?id=<?php echo $row['id']; ?>" class="btn btn-info">Edit</a> &nbsp;
-    <a href="search_land_parcel.php" class="btn btn-danger">Back</a>
+    <a href="land_parcel_all.php" class="btn btn-danger">Back</a>
 </center>
 
 

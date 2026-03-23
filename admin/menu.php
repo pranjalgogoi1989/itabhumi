@@ -25,28 +25,49 @@
         </a>
     </li>
 
-    <li class="menu-item <?= isActive('new_allot.php') ?>">
-        <a href="/admin/new_allot.php" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-home-circle"></i>
-            <div data-i18n="Analytics">Land Parcel</div>
-        </a>
-    </li>
 
-    <li class="menu-item <?= isActive('chitha_register.php') ?>">
-        <a href="/admin/chitha_register.php" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-home-circle"></i>
-            <div data-i18n="Analytics">Chitha Register</div>
-        </a>
-    </li>
 
-    <li class="menu-item <?= isActive('land_allot.php') ?>">
-        <a href="/admin/land_allot.php" class="menu-link">
-            <i class="menu-icon tf-icons bx bx-home-circle"></i>
-            <div data-i18n="Analytics">Land Allot</div>
+    <li class="menu-item">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons bx bx-layout"></i><div data-i18n="Layouts">Land Parcel</div>
         </a>
+        <ul class="menu-sub">
+            <li class="menu-item"><a href="/admin/new_allot.php" class="menu-link"><div data-i18n="Blank">Add New</div></a></li>
+            <li class="menu-item"><a href="/admin/land_parcel_all.php" class="menu-link"><div data-i18n="Blank">All Records</div></a></li>
+            <li class="menu-item"><a href="/admin/search_land_parcel.php" class="menu-link"><div data-i18n="Fluid">Search Land Parcel</div></a></li>
+        </ul>
+    </li>
+    <li class="menu-item">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons bx bx-layout"></i><div data-i18n="Layouts">Chitha Register</div>
+        </a>
+        <ul class="menu-sub">
+            <li class="menu-item"><a href="/admin/chitha_register.php" class="menu-link"><div data-i18n="Blank">Add New</div></a></li>
+            <li class="menu-item"><a href="/admin/chitha_register_all.php" class="menu-link"><div data-i18n="Blank">All Records</div></a></li>
+            <li class="menu-item"><a href="/admin/search_chitha_details.php" class="menu-link"><div data-i18n="Blank">Search Chitha Details</div></a></li>
+        </ul>
+    </li>
+    
+    <li class="menu-item">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons bx bx-layout"></i><div data-i18n="Layouts">Land Allot</div>
+        </a>
+        <ul class="menu-sub">
+            <li class="menu-item"><a href="/admin/land_allot.php" class="menu-link"><div data-i18n="Blank">Add New</div></a></li>
+            <li class="menu-item"><a href="/admin/land_allot_all.php" class="menu-link"><div data-i18n="Blank">All Records</div></a></li>
+            <li class="menu-item"><a href="/admin/search_land_allot.php" class="menu-link"><div data-i18n="Blank">Search Land Details</div></a></li>
+        </ul>
     </li>
 
     <li class="menu-item">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+            <i class="menu-icon tf-icons bx bx-layout"></i><div data-i18n="Layouts">Administration</div>
+        </a>
+        <ul class="menu-sub">
+            <li class="menu-item"><a href="/admin/users.php" class="menu-link"><div data-i18n="Blank">Users</div></a></li>
+        </ul>
+    </li>
+    <!-- <li class="menu-item">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon tf-icons bx bx-layout"></i><div data-i18n="Layouts">Reports</div>
         </a>
@@ -55,6 +76,13 @@
             <li class="menu-item"><a href="/admin/search_land_parcel.php" class="menu-link"><div data-i18n="Fluid">Land Parcel</div></a></li>
             <li class="menu-item"><a href="/admin/search_land_allot.php" class="menu-link"><div data-i18n="Fluid">Land Allotment</div></a></li>
         </ul>
-    </li>
+    </li> -->
     
+
+    <li class="menu-item <?= isActive('/logout.php') ?>">
+        <a href="/logout.php" class="menu-link">
+            <i class="bx bx-power-off me-2"></i>
+            <div data-i18n="Analytics">Logout</div>
+        </a>
+    </li>
 </ul>

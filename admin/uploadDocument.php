@@ -9,6 +9,7 @@ if(isset($_FILES['document'])) {
     if (!file_exists($targetDir)) {
         mkdir($targetDir, 0755, true);
     }
+    //$module_name = $_POST["module_name"];
     $document_name=$_POST["document_name"];
     $originalName = $_FILES["document"]["name"];
     $fileExt = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));

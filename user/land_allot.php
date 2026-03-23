@@ -1,17 +1,18 @@
 <?php
 require_once __DIR__ . '/../middleware/auth.php';
-requireRole('admin');
+requireRole('user');
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../security/csrf.php';
 $title='Land Allotment Details';
 require_once 'header.php';
 
-$row_id=$_GET["id"];
+//$row_id=$_GET["id"];
+$row_id=2332;
 $stmt=$pdo->prepare('select * from land_allotment where id=?');
 $stmt->execute([$row_id]);
 $row = $stmt->fetch();
 if (!$row) {
-    header('Location: land_allot.php');
+    //header('Location: land_allot.php');
     //exit();
 }
 ?>
@@ -24,7 +25,7 @@ if (!$row) {
             <div class="d-flex align-items-top row">
                 <div class="col-sm-12">
                     <div class="card-body">
-                        <h5 class="card-title text-primary text-center">Land Allotment</h5>
+                        <h5 class="card-title text-primary text-center">Land Allotment Details</h5>
 
 <!-- Basic Parcel Details -->
 <fieldset>
@@ -150,8 +151,7 @@ if (!$row) {
 </fieldset>
 <br>
 <center>
-    <a href="/admin/edit_land_record.php?id=<?php echo $row_id; ?>" class="btn btn-info">Edit</a>
-    <a href="/admin/land_allot_all.php" class="btn btn-primary">Back</a>
+    <a href="/user/index.php" class="btn btn-primary">Back</a>
 </center>
 
                     </div>

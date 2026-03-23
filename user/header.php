@@ -22,11 +22,10 @@
   <link rel="stylesheet" href="/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
   <link rel="stylesheet" href="/assets/vendor/libs/apex-charts/apex-charts.css" />
   <link rel="stylesheet" href="/assets/css/datatables.min.css" />
-
-  <script src="/assets/js/config.js"></script>
   <script src="/assets/js/jquery-3.7.1.js"></script>
   <script src="/assets/js/datatables.min.js"></script>
   <script src="/assets/vendor/js/helpers.js"></script>
+<script src="/assets/js/config.js"></script>
 </head>
 
 <body>
@@ -88,7 +87,7 @@
                 <ul class="dropdown-menu dropdown-menu-end">
                   
                   <li>
-                    <a class="dropdown-item" href="#">
+                    <a class="dropdown-item" href="/user/profile.php">
                       <i class="bx bx-user me-2"></i>
                       <span class="align-middle">My Profile</span>
                     </a>
