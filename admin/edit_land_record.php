@@ -393,14 +393,25 @@ if (!$row) {
                 <span class="close" onclick="closeModal()">&times;</span>
             </div>
         </div>
+        <span>(upload pdf only)</span>
         <form id="uploadForm" enctype="multipart/form-data">
-            <input type="text" name="document_name" class="form-control" placeholder="Enter a File Description"/>
-            <input type="file" name="document" class="form-contorl" required><br><br>
+            <div class="mb-3">
+                <label for="document_name">Enter a File Description/Caption</label>
+                <input type="text" name="document_name" id="document_name" class="form-control" placeholder="Enter a File Description"/>
+            </div>
+            <div class="mb-3">
+                <input type="file" name="document" id="document" class="form-contorl" required><br>
+            </div>
+            <br>
+            <div class="progress" id="progress" style="display:none">
+                <div id="progressBar" class="progress-bar" style="width:0%">0%</div>
+            </div>
+            <br>
             <center>
                 <button type="submit" class="btn btn-primary">Upload</button>
             </center>
         </form>
-        <div id="response"></div>
+        <div id="response" style="text-align:center"></div>
     </div>
 </div>
                     </div>
@@ -412,6 +423,11 @@ if (!$row) {
 <script>
 
 function openModal() {
+     document.getElementById("response").innerHTML = "";
+    document.getElementById("document_name").value = "";
+    document.getElementById("document").value = "";
+    document.getElementById("progressBar").style.width = "0%";
+    document.getElementById("progress").style.display = "none";
     document.getElementById("uploadModal").style.display = "block";
 }
 
@@ -421,36 +437,47 @@ function closeModal() {
 let count=0;
 document.getElementById("uploadForm").addEventListener("submit", function(e) {
     e.preventDefault();
+    document.getElementById("response").innerHTML = "";
+    document.getElementById("progress").style.display = "block";
+    document.getElementById("progressBar").style.width = "0%";
     let formData = new FormData(this);
-    fetch("uploadDocument.php", {
-        method: "POST",
-        body: formData
-    })
-    .then(response => response.text())
-    .then(data => {
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "uploadDocument.php", true);
+    xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable) {
+            let percent = Math.round((e.loaded / e.total) * 100);
+
+            let progressBar = document.getElementById("progressBar");
+            progressBar.style.width = percent + "%";
+            progressBar.innerHTML = percent + "%";
+        }
+    };
+    xhr.onload = function() {
+        let data = xhr.responseText;
         document.getElementById("response").innerHTML = data;
-        let datas = data.split("|");
-        count=document.getElementById("doc_count").value;
-        count++;
-        document.getElementById("doc_count").value = count;
-        let html = `
-            <div class='row'>
-                <div class='col-md-1'>`+count+`</div>
-                <div class='col-md-3'>`+datas[0]+`
-                    <input type='hidden' id='doc_name`+count+`' name='doc_name`+count+`' value='`+datas[0]+`' />
+        if(data.includes("|")) {
+            let datas = data.split("|");
+            count++;
+            document.getElementById("doc_count").value = count;
+            let html = `
+                <div class='row'>
+                    <div class='col-md-1'>`+count+`</div>
+                    <div class='col-md-3'>`+datas[0]+`
+                        <input type='hidden' id='doc_name`+count+`' name='doc_name`+count+`' value='`+datas[0]+`' />
+                    </div>
+                    <div class='col-md-3'>
+                        <input type='hidden' id='doc_file`+count+`' name='doc_file`+count+`' value='`+datas[1]+`' />
+                        <a href='/uploads/document/`+datas[1]+`' target='_blank' class='btn btn-primary'>View Document</a></div>
+                    <div class='col-md-4'><span onClick='removeRow(this, "`+datas[1]+`")' class='btn btn-danger'>Remove</span></div>
                 </div>
-                <div class='col-md-3'>
-                    <input type='hidden' id='doc_file`+count+`' name='doc_file`+count+`' value='`+datas[1]+`' />
-                    <a href='/uploads/document/`+datas[1]+`' target='_blank' class='btn btn-primary'>View Document</a></div>
-                <div class='col-md-4'><span onClick='removeRow(this, "`+datas[1]+`")' class='btn btn-danger'>Remove</span></div>
-            </div>
-        `;
-        document.getElementById("doclist").insertAdjacentHTML("beforeend", html);
-        closeModal();
-    })
-    .catch(error => {
-        document.getElementById("response").innerHTML = "Upload failed!";
-    });
+            `;
+            document.getElementById("doclist").insertAdjacentHTML("beforeend", html);
+            document.getElementById("response").innerHTML = "Upload Successful";
+            closeModal(); 
+        }
+        document.getElementById("response").innerHTML = data;
+    };
+    xhr.send(formData);
 });
 
 function removeRow(button, filename) {

@@ -13,13 +13,13 @@ if(isset($_FILES['document'])) {
     $document_name=$_POST["document_name"];
     $originalName = $_FILES["document"]["name"];
     $fileExt = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
-    $allowedTypes = ["pdf","doc","docx","jpg","png"];
+    $allowedTypes = ["pdf","doc","docx","jpg","png","jpeg"];
     if(!in_array($fileExt, $allowedTypes)) {
         echo "<span style='color:red'>Invalid file type.</span>";
         exit;
     }
-    if ($_FILES["document"]["size"] > 5 * 1024 * 1024) {
-        echo "<span style='color:red'>File too large (Max 5MB).</span>";
+    if ($_FILES["document"]["size"] > 15 * 1024 * 1024) {
+        echo "<span style='color:red'>File too large (Max 15MB).</span>";
         exit;
     }
     $uniqueId = bin2hex(random_bytes(16));
@@ -32,7 +32,7 @@ if(isset($_FILES['document'])) {
         echo $document_name."|" . $newFileName;
 
     } else {
-        echo "<span style='color:red'>Upload failed.</span>";
+        echo "<span style='color:red;'>Upload failed.</span>";
     }
 
 }
