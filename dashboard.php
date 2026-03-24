@@ -8,6 +8,10 @@ if($myrole == 'admin'){
   header("Location: /admin/");
   exit();
 }
+if($myrole == 'staff'){
+  header("Location: /staff/");
+  exit();
+}
 if($myrole == 'user'){
   header("Location: /user/");
   exit();

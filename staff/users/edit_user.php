@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../../middleware/auth.php';
-requireRole('admin');
+requireRole('staff');
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../security/csrf.php';
 $title='Edit User';
@@ -87,7 +87,6 @@ $user = $stmt->fetch();
                                     <div class="mb-3">
                                         <label for="role" class="form-label">Role </label>
                                         <select name="role" id="role" class="form-control">
-                                            <option value="admin">Admin</option>
                                             <option value="staff">Staff</option>
                                             <option value="user">User</option>
                                         </select>
