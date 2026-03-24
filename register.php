@@ -14,6 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
     $confirm  = $_POST['confirm_password'];
 
+    $mobile_no = $_POST['mobile_no'];
+
     // Validation
     if (strlen($name) < 3) {
       $errors[] = "Name must be at least 3 characters.";
@@ -34,9 +36,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = "Passwords do not match.";
     }
 
+    if (!preg_match('/^\d{10}$/', $mobile_no)) {
+      $errors[] = "Mobile number must be 10 digits.";
+    }
+       if (empty($mobile_no)) {
+        $errors[] = "Mobile Number is required.";
+    }
+
     // Check duplicates
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
-    $stmt->execute([$username, $email]);
+    $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ? or mobile_no =?");
+    $stmt->execute([$username, $email, $mobile_no]);
 
     if ($stmt->fetch()) {
         $errors[] = "Username or email already exists.";
@@ -48,10 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         $stmt = $pdo->prepare(
-            "INSERT INTO users (name,username, email, password, role) VALUES (?, ?, ?, ?,?)"
+            "INSERT INTO users (name,username, email, password, role, mobile_no) VALUES (?, ?, ?, ?,?,?)"
         );
 
-        $stmt->execute([$name, $username, $email, $hashedPassword,'admin']);
+        $stmt->execute([$name, $username, $email, $hashedPassword,'user',$mobile_no]);
 
         header("Location: index.php?registered=1");
         exit();
@@ -133,6 +142,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="mb-3">
                   <label for="email" class="form-label">Email</label>
                   <input type="text" class="form-control" id="email" name="email" placeholder="Enter your email" />
+                </div>
+                <div class="mb-3">
+                  <label for="email" class="form-label">Mobile No</label>
+                  <input type="text" class="form-control" id="mobile_no" name="mobile_no" placeholder="Enter your Mobile No" />
                 </div>
                 <div class="mb-3 form-password-toggle">
                   <label class="form-label" for="password">Password</label>
