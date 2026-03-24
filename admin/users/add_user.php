@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare(
             "INSERT INTO users (username, email, name, role,mobile_no, password) VALUES (?,?,?,?,?,?)"
         );
-        $stmt->execute([$user_name, $email, $name, $role, $mobile_o, $password]);
+        $stmt->execute([$user_name, $email, $name, $role, $mobile_no, $password]);
         echo "<div class='alert alert-success'>User Registered Successfully</div>"; 
     }else{
         echo "<div class='alert alert-warning'>".$errors."</div>"; 
