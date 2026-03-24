@@ -379,7 +379,7 @@ if (!$row) {
 </fieldset>
 <br>
 <center>
-    <a href="/admin/land_record_details.php?id=<?php echo $row['id']; ?>" class="btn btn-warning">Back </a>
+    <a href="/staff/land_record_details.php?id=<?php echo $row['id']; ?>" class="btn btn-warning">Back </a>
     <button type="submit"  class="btn btn-primary">Update</button>
 </center>
 </form>
